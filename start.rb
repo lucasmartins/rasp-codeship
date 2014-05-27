@@ -24,12 +24,12 @@ class CodeshipBuildStatus
   end
 
   def self.boot_pins
-    `echo '17' > /sys/class/unexport`
-    `echo '17' > /sys/class/export`
-    `echo out > /sys/class/gpio17/direction`
-    `echo 1 > /sys/class/gpio17/value`
+    `echo '17' > /sys/class/gpio/unexport`
+    `echo '17' > /sys/class/gpio/export`
+    `echo out > /sys/class/gpio/gpio17/direction`
+    pin(17,:on)
     sleep 1
-    `echo 0 > /sys/class/gpio17/value`
+    pin(17,:off)
   end
 
   def self.build_status
