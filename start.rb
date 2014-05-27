@@ -8,15 +8,17 @@ class CodeshipBuildStatus
     boot_pins
     trap("SIGINT") do
       puts 'Bye bye!'
-      pin(0,on) # alert the script is down!
+      pin(17,:on) # alert the script is down!
       exit!
     end
     puts 'Starting...'
     while true do
       if build_status==:success
         puts 'Build is good'
+        pin(17,:on)
       else
         puts 'Build is bad'
+        pin(17,:off)
       end
     end
   end
@@ -27,7 +29,7 @@ class CodeshipBuildStatus
     `echo out > /sys/class/gpio17/direction`
     `echo 1 > /sys/class/gpio17/value`
     sleep 1
-    `echo 1 > /sys/class/gpio17/value`
+    `echo 0 > /sys/class/gpio17/value`
   end
 
   def self.build_status
@@ -40,9 +42,9 @@ class CodeshipBuildStatus
 
   def self.pin(number,status)
     if status==:on
-      puts "Setting PIN[#{number}] to #{status}"
+      `echo 1 > /sys/class/gpio#{number}/value`
     elsif status==:off
-      puts "Setting PIN[#{number}] to #{status}"
+      `echo 0 > /sys/class/gpio#{number}/value`
     else
       raise 'wft?'
     end
