@@ -5,9 +5,10 @@ class CodeshipBuildStatus
   PROJECT = ENV['CODESHIP_PROJECT']
   def self.run!
     raise 'I need both CODESHIP_TOKEN and CODESHIP_PROJECT env var to be set!' unless ENV['CODESHIP_TOKEN'] && ENV['CODESHIP_PROJECT']
-
+    boot_pins
     trap("SIGINT") do
       puts 'Bye bye!'
+      pin(0,on) # alert the script is down!
       exit!
     end
     puts 'Starting...'
@@ -18,6 +19,15 @@ class CodeshipBuildStatus
         puts 'Build is bad'
       end
     end
+  end
+
+  def self.boot_pins
+    `echo '17' > /sys/class/unexport`
+    `echo '17' > /sys/class/export`
+    `echo out > /sys/class/gpio17/direction`
+    `echo 1 > /sys/class/gpio17/value`
+    sleep 1
+    `echo 1 > /sys/class/gpio17/value`
   end
 
   def self.build_status
