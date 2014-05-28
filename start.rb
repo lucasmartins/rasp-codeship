@@ -22,6 +22,8 @@ class CodeshipBuildStatus
         if build_status==:testing
           puts 'Building ...'
           pin(17,:off)
+          pin(18,:off)
+          sleep 0.1
           pin(18,:on)
         else
           puts 'Build is bad'
