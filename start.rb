@@ -3,6 +3,7 @@ require 'json'
 class CodeshipBuildStatus
   TOKEN = ENV['CODESHIP_TOKEN']
   PROJECT = ENV['CODESHIP_PROJECT']
+
   def self.run!
     raise 'I need both CODESHIP_TOKEN and CODESHIP_PROJECT env var to be set!' unless ENV['CODESHIP_TOKEN'] && ENV['CODESHIP_PROJECT']
     boot_pins
@@ -16,9 +17,17 @@ class CodeshipBuildStatus
       if build_status==:success
         puts 'Build is good'
         pin(17,:off)
+        pin(18,:off)
       else
-        puts 'Build is bad'
-        pin(17,:on)
+        if build_status==:testing
+          puts 'Building ...'
+          pin(17,:off)
+          pin(18,:on)
+        else
+          puts 'Build is bad'
+          pin(17,:on)
+          pin(18,:off)
+        end
       end
     end
   end
@@ -27,13 +36,20 @@ class CodeshipBuildStatus
     `echo '17' > /sys/class/gpio/unexport`
     `echo '17' > /sys/class/gpio/export`
     `echo out > /sys/class/gpio/gpio17/direction`
+    `echo '18' > /sys/class/gpio/unexport`
+    `echo '18' > /sys/class/gpio/export`
+    `echo out > /sys/class/gpio/gpio17/direction`
     pin(17,:on)
+    pin(18,:on)
     sleep 0.1
     pin(17,:off)
+    pin(18,:off)
     sleep 0.1
     pin(17,:on)
+    pin(18,:on)
     sleep 0.1
     pin(17,:off)
+    pin(18,:off)
   end
 
   def self.build_status
