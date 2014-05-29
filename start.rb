@@ -18,18 +18,15 @@ class CodeshipBuildStatus
       status = build_status
       puts "CodeShip build status is #{status}"
       if status==:success
-        puts 'Build is good'
         pin(:broken,:off)
         pin(:running,:off)
       else
         if status==:testing
-          puts 'Building ...'
           pin(:broken,:off)
           pin(:running,:off)
           sleep 0.1
           pin(:running,:on)
         else
-          puts 'Build is bad'
           pin(:broken,:on)
           pin(:running,:off)
         end
