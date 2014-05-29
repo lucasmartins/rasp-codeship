@@ -11,16 +11,18 @@ class CodeshipBuildStatus
     trap("SIGINT") do
       puts 'Bye bye!'
       pin(:broken,:off) # alert the script is down!
-      exit!
+      exit! 
     end
     puts 'Starting...'
     while true do
-      if build_status==:success
+      status = build_status
+      puts "CodeShip build status is #{status}"
+      if status==:success
         puts 'Build is good'
         pin(:broken,:off)
         pin(:running,:off)
       else
-        if build_status==:testing
+        if status==:testing
           puts 'Building ...'
           pin(:broken,:off)
           pin(:running,:off)
